@@ -1,0 +1,120 @@
+#
+#
+#  COMP 15 HW4 - Tree-Mendous Alphabetizer
+#
+#  README
+#  README for alphabetizer
+#  Modified By (UTLN): rserot01
+#          On       : 10/26/2017
+#
+#
+
+
+	A. Title and Author
+
+		Title: Tree-Mendous Alphabetizer
+		Author: rserot01
+
+
+	B. Purpose
+
+		The purpose of this program is to take input in the form of commandline input or a text file and read in the words to a binary search tree, which orders the words by alphabetical order, with higher alphabetical order words on the left, and lower alphabetical order words on the right.
+		The binary search tree is perfect for alphabetizing due to the BST invariant, which organizes the nodes in an ordered fashion.
+
+	C. Acknowledgments
+
+		I used the file "1-1000.txt", which contains a list of 1000 English words, which I found on the public Github repository of the user "deekayen". I used this file to make a 50 word file which I used as input to my Alphabetizer in my alphabetizerTest function and when calling the alphabetizer program as test input. I also used the full 1000 words to ensure my program could handle large inputs without crashing.
+
+		I also used the file BSTree.cpp from lab from lab6 for help understanding the recursive insertion and deletion algorithms for a BST.
+
+	D. Files
+
+		main.cpp: 				Main function program 
+		Alphabetizer.cpp: 		Implementation for the Alphabetizer class.
+								Contains all the functions for the alphabetizer,
+								including the run loops.
+
+		Alphabetizer.h:   		Interface for the Alphabetizer class.
+								Outlines the Alphabetizer class.
+
+		testAlphabetizer.cpp:	Testing client for the Alphabetizer class.
+								Used to test the Alphabetizer class functions by 
+								calling both run functions with varying input, including using the word files provided and described below.
+
+		StringBST.cpp: 			Implementation for the StringBST class.
+								Contains all the various tree manipulation
+								functions of the StringBST class.
+
+		StringBST.h:			Interface for the StringBST class.
+
+		testStringBST.cpp:		Testing client for the StringBST class. Contains 							a main function that calls each of the public 					    		functions in the StringBST class.
+
+		Makefile:				Makefile for building the alphabetizer program.
+
+		README:					Describes the alphabetizer program in detail, 
+								including the files, compilation, running, purpose, and algorithms.
+
+		some_words.txt:  		List of 50 words for example input used for testing.
+		
+		lots_of_words.txt:		List of 1000 words for example input used for 								testing.
+
+	E. Compiling and Running
+
+		To compile this program, cd to the directory containing these files and type "make" in the terminal prompt and press enter to compile and link the alphabetizer program.
+
+		There are two ways to run this program. One is to enter word input in the commandline after calling alphabetizer (interactive mode), the other is to enter commandline arguments that specify an order and a file that contains word input (automated mode), which the program will read in from automatically.
+
+		In order to run this program in interactive mode, type ./alphabetizer and press enter. Then, specify the alphabetical order, either f for forward, or r for reverse, then you can start adding word input to be alphabetized, taking care to put spaces between the words being inputted. To signal that you are done giving input, press CTRL-D. 
+
+		To run the program in automated mode, provide two command line arguments after typing ./alphabetizer. The first argument should be the order to print, either "f" or "r", and the second should be the name of the file that you want the program to read from. This will termiante automatically.
+
+
+	F. Data Structures and Algorithms
+
+		The central data structure for this program is a binary search tree. The purpose of using a binary search tree for an alphabetizing program is that the structure of a binary search tree is such that the children of each node are organized in a manner such that the left is child is less than the parent and the right child is greater than the parent. This allows for insertion into a BST to sort the input in a way, such that the minimum element is the left most leaf, and the maximum element is the right most leaf. When printing, we can use a getMax or getMin function to print the elements in forward alphabetical or reverse alphabetical order.
+
+		The algorithms used were all recursive, as is usually the easiest way to implement tree manipulation algorithms.
+
+		The add algorithm that I implemented used a recursive helper function.
+		This function returned a BSTNode pointer and took in as arguments a BSTNode pointer and a string argument that is the string to be added. If the node being pointed to, first called as root in the public add() function, is NULL, then another helper function, insertNode, is called with the same arguments as the recursiveAdd helper. This insertNode function allocated a new BSTNode on the heap, assigns it to the null node pointer, assigns the string data to this new node, and initializes the string count of this node to 1 and returns.
+
+		Going back to the recursiveAdd function, If the node is not NULL, it checks if the word at the current node is equal to the word being added. If so, all that is done is to increment the string count at the current node, and then the function goes out of the if statement and returns the current node. 
+
+		If the word at the current node is greater than the word being added, then the current node's left child pointer gets the recursive call of recursiveAdd with the arguments, (node->left, word). Else, the word at the current node must be less than the word being added, thus the current node's right pointer gets the recursive call with (node->right, word) as parameters.
+
+ 		After the if terminates, and still in the parent "else", we return node.
+ 		Thus there are two base cases: the node->word is equal, or the node == NULL,
+ 		and two recursive calls.
+
+ 		The remove algorithm that I implemented used several recursive helper functions. The public remove function calls a recursive helper function with parameters of the word being removed and the current node.
+ 		This function checks if the word argument is equal to the word at the current node. This is the base case. 
+
+ 		Inside this condition, the function checks if the current node is a leaf, a parent of two node, a parent of one node, or a duplicate node. Some of these functions call their own specific remove functions to handle the various algorithms for removing a parent or a leaf. 
+
+ 		To remove a duplicate, we simple decrement strCount and return. 
+ 		
+ 		To remove a leaf, we delete the node and return NULL so that the parent is recursively assigned NULL instead of pointing to non-existent memory. 
+
+ 		To remove a parent of one node, we check if it is the right or left node that is not NULL, and then delete the current node, returning via a temp pointer the non-NULL child so that the parent of the deleted node now points to the child of the deleted node. 
+
+ 		To remove a parent of two nodes, the function finds the minimum node in the right subtree of the node being removed, and saves this to a pointer. Then, the data in the right-minimum node is copied to the node being removed, so as to avoid deleting and rearranging nodes. Now, the node has been "removed" by making it effectively equal to the minimum node in its right subtree. Now there are two nodes with the same word value, and we want to delete the one that is a leaf that we copied from.
+
+ 		 To do this, we call another function, removeBadLeaf, which calls the recursiveRemove function on the right subtree of the node with the same word being the second argument. Then, recursiveRemove will delete the duplicate "bad leaf" node. Lastly, we return the node that was copied to. 
+
+
+ 		 Two cases in which a BST could be used are the following:
+
+ 		 To sort birthdays of a group of friends so figure out which is the oldest. Each node would contain the name, and year, day, and month number of the friends birthday, with earliest birhtday on the left.
+
+ 		 To sort the expenditures of an accountant's balance sheet by amount spent by inserting into the tree, with lowest amount on the left.
+
+
+
+	G. Testing Details
+
+		To test the StringBST program, I used the testStringBST.cpp function which calls each function of the StringBST class using both the instances of the default contstructor and the parametrized constructor to ensure both constructors are totally functional.
+
+		To test the Alphabetizer class, I used the testAlphabetizer.cpp function which calls the default run function and takes standard input from cin, and I enter input on cin and see if the program properly alphabetizes and prints the words I enter after entering CTRL-D, the eof flag.
+		The testAlphabetizer.cpp function also tested the parametrized run, which I tested by entering commandline arguments of "f" or "r", and a filename of a wordlist file that I found online (see Acknowledgments and Files sections).
+
+		To test the complete "alphabetizer" program, I used command line inputs, giving both in order and out of order alphabetical input, and providing either the "f" or "r" arguments to see how the program handled these. I also entered commandline inouts to specify filenames, specifically "some_words.txt" and "lots_of_words.txt" and noticed the print output to see if it was in correct alphabetical or reverse alphabetical order.
